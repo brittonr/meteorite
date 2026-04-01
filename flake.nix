@@ -9,9 +9,13 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     flake-utils.url = "github:numtide/flake-utils";
+    ratcore = {
+      url = "github:brittonr/ratcore";
+      flake = false;
+    };
   };
 
-  outputs = { self, nixpkgs, crane, rust-overlay, flake-utils, ... }:
+  outputs = { self, nixpkgs, crane, rust-overlay, flake-utils, ratcore, ... }:
     flake-utils.lib.eachDefaultSystem (system:
       let
         pkgs = import nixpkgs {
@@ -23,7 +27,24 @@
 
         craneLib = (crane.mkLib pkgs).overrideToolchain rustToolchain;
 
-        src = craneLib.cleanCargoSource ./.;
+        # Combine meteorite source with ratcore (path dep at ../ratcore)
+        rawSrc = pkgs.lib.fileset.toSource {
+          root = ./.;
+          fileset = pkgs.lib.fileset.unions [
+            ./Cargo.toml
+            ./Cargo.lock
+            ./rust-toolchain.toml
+            (pkgs.lib.fileset.fileFilter (f: f.hasExt "rs" || f.hasExt "toml" || f.hasExt "css") ./crates)
+          ];
+        };
+
+        src = pkgs.runCommand "meteorite-src" {} ''
+          cp -r ${rawSrc} $out
+          chmod -R u+w $out
+          cp -r ${ratcore} $out/ratcore
+          # Rewrite path dep from ../ratcore to ./ratcore for sandbox
+          sed -i 's|path = "../ratcore"|path = "ratcore"|' $out/Cargo.toml
+        '';
 
         nativeBuildInputs = with pkgs; [
           pkg-config

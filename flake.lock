@@ -49,11 +49,28 @@
         "type": "github"
       }
     },
+    "ratcore": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1775081021,
+        "narHash": "sha256-hH/b8zJSsdlKry/P9givGeI0LRSNaqR+50yyY79+xQA=",
+        "owner": "brittonr",
+        "repo": "ratcore",
+        "rev": "1f888b27e46dcab686389caaa68b8553bee6b3e6",
+        "type": "github"
+      },
+      "original": {
+        "owner": "brittonr",
+        "repo": "ratcore",
+        "type": "github"
+      }
+    },
     "root": {
       "inputs": {
         "crane": "crane",
         "flake-utils": "flake-utils",
         "nixpkgs": "nixpkgs",
+        "ratcore": "ratcore",
         "rust-overlay": "rust-overlay"
       }
     },
