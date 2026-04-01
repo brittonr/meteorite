@@ -8,6 +8,10 @@ members = [
     "crates/met-hooks",
     "crates/met-table",
     "crates/met-overlay",
+    "crates/met-tree",
+    "crates/met-command-palette",
+    "crates/met-datepicker",
+    "crates/met-markdown",
     "crates/showcase",
 ]
 
@@ -33,3 +37,7 @@ met-layout = { path = "crates/met-layout" }
 met-hooks = { path = "crates/met-hooks" }
 met-table = { path = "crates/met-table" }
 met-overlay = { path = "crates/met-overlay" }
+met-tree = { path = "crates/met-tree" }
+met-command-palette = { path = "crates/met-command-palette" }
+met-datepicker = { path = "crates/met-datepicker" }
+met-markdown = { path = "crates/met-markdown" }

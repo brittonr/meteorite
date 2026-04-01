@@ -1,0 +1,10 @@
+[package]
+name = "met-datepicker"
+version = "0.1.0"
+edition.workspace = true
+license.workspace = true
+description = "Calendar date picker and time input components for Dioxus"
+
+[dependencies]
+dioxus = { workspace = true }
+met-core = { workspace = true }

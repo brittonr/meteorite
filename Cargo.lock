@@ -1829,10 +1829,26 @@ dependencies = [
 ]
 
 [[package]]
+name = "met-command-palette"
+version = "0.1.0"
+dependencies = [
+ "dioxus",
+ "met-core",
+]
+
+[[package]]
 name = "met-core"
 version = "0.1.0"
 dependencies = [
  "dioxus",
+]
+
+[[package]]
+name = "met-datepicker"
+version = "0.1.0"
+dependencies = [
+ "dioxus",
+ "met-core",
 ]
 
 [[package]]
@@ -1846,6 +1862,14 @@ dependencies = [
 
 [[package]]
 name = "met-layout"
+version = "0.1.0"
+dependencies = [
+ "dioxus",
+ "met-core",
+]
+
+[[package]]
+name = "met-markdown"
 version = "0.1.0"
 dependencies = [
  "dioxus",
@@ -1870,6 +1894,14 @@ dependencies = [
 ]
 
 [[package]]
+name = "met-tree"
+version = "0.1.0"
+dependencies = [
+ "dioxus",
+ "met-core",
+]
+
+[[package]]
 name = "met-widgets"
 version = "0.1.0"
 dependencies = [
@@ -1882,11 +1914,15 @@ dependencies = [
 name = "meteorite"
 version = "0.1.0"
 dependencies = [
+ "met-command-palette",
  "met-core",
+ "met-datepicker",
  "met-hooks",
  "met-layout",
+ "met-markdown",
  "met-overlay",
  "met-table",
+ "met-tree",
  "met-widgets",
 ]
 

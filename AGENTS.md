@@ -13,6 +13,10 @@
 - `met-hooks` has custom Dioxus hooks
 - `met-table` has the data table component
 - `met-overlay` has modal/dialog/tooltip/toast
+- `met-tree` has a tree view with expand/collapse and guide lines
+- `met-command-palette` has a fuzzy-search ⌘K overlay (fuzzy scoring is pure logic, no UI deps)
+- `met-datepicker` has a calendar date picker and time input
+- `met-markdown` has a markdown-to-Dioxus renderer (parse.rs is pure logic, render.rs is the component)
 - `meteorite` re-exports all crates (like dioxus re-exports its sub-crates)
 - `showcase` is the demo app (binary, depends on everything)
 

@@ -27,10 +27,14 @@ fn app() -> Element {
 | `met-overlay` | Tooltip, Dialog, Modal, Popover, ContextMenu, Toast |
 | `met-layout` | VStack, HStack, Container, Grid, Sidebar, Split |
 | `met-hooks` | use_debounce, use_toggle, use_local_storage |
-| `met-table` | Data table with columns |
+| `met-table` | Data table with sorting, inline editing, row selection, row numbers |
+| `met-tree` | Tree view with expand/collapse, guide lines, keyboard nav |
+| `met-command-palette` | Fuzzy-search ⌘K command palette overlay |
+| `met-datepicker` | Calendar date picker and time input |
+| `met-markdown` | Markdown renderer (headings, lists, code, links, images) |
 | `meteorite` | Umbrella re-export of all crates |
 
-## Components (19)
+## Components (24)
 
 ### Widgets (`met-widgets`)
 - **Button** — variants, sizes, loading, disabled
@@ -65,6 +69,19 @@ fn app() -> Element {
 - **Grid** — CSS grid with column count
 - **Sidebar** — collapsible side panel
 - **Split** — horizontal/vertical split pane
+
+### Tree (`met-tree`)
+- **Tree** — hierarchical tree view with expand/collapse, guide lines (│├└), keyboard nav (Arrow keys, Enter, Space), icons, selection events
+
+### Command Palette (`met-command-palette`)
+- **CommandPalette** — ⌘K-style fuzzy search overlay with match highlighting, keyboard nav (↑↓ Enter Escape), shortcuts display, backdrop dismiss
+
+### Date Picker (`met-datepicker`)
+- **DatePicker** — calendar grid with month navigation, today highlight, weekend styling, date selection
+- **TimeInput** — HH:MM time entry with number inputs
+
+### Markdown (`met-markdown`)
+- **Markdown** — renders markdown string as themed HTML: headings (h1–h6), paragraphs, bold/italic/bold-italic, inline code, fenced code blocks with language class, links, images, blockquotes, ordered/unordered lists, horizontal rules
 
 ## Theming
 

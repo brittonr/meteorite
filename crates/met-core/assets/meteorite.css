@@ -521,6 +521,243 @@
 .met-split-horizontal > .met-split-handle { cursor: col-resize; }
 .met-split-vertical > .met-split-handle { cursor: row-resize; }
 
+/* ── Table (enhanced) ──────────────────────────────────────────── */
+
+.met-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: var(--met-font-md);
+    color: var(--met-fg);
+}
+.met-table th, .met-table td {
+    padding: var(--met-space-xs) var(--met-space-sm);
+    text-align: left;
+    border-bottom: 1px solid var(--met-border);
+}
+.met-table thead th {
+    font-weight: 600;
+    color: var(--met-muted);
+    font-size: var(--met-font-sm);
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    border-bottom: 2px solid var(--met-border);
+}
+.met-table-th-sortable { cursor: pointer; user-select: none; }
+.met-table-th-sortable:hover { color: var(--met-fg); }
+.met-table-th-sorted { color: var(--met-primary); }
+.met-table-sort-icon { opacity: 0.6; font-size: 0.85em; }
+.met-table-striped tbody tr:nth-child(even) {
+    background: color-mix(in srgb, var(--met-fg) 3%, transparent);
+}
+.met-table-row { transition: background 0.1s; }
+.met-table-row:hover { background: color-mix(in srgb, var(--met-primary) 8%, transparent); }
+.met-table-row-selected {
+    background: color-mix(in srgb, var(--met-primary) 15%, transparent) !important;
+}
+.met-table-rownum-header, .met-table-rownum {
+    color: var(--met-muted); font-size: var(--met-font-sm); width: 3em; text-align: right;
+}
+.met-table-cell-editing { padding: 0; }
+.met-table-cell-input {
+    width: 100%; padding: var(--met-space-xs) var(--met-space-sm);
+    font: inherit; color: var(--met-fg); background: var(--met-bg);
+    border: 2px solid var(--met-primary); border-radius: 0;
+    outline: none;
+}
+
+/* ── Tree ──────────────────────────────────────────────────────── */
+
+.met-tree {
+    list-style: none;
+    margin: 0; padding: 0;
+    font-size: var(--met-font-md);
+    color: var(--met-fg);
+}
+.met-tree-row {
+    display: flex; align-items: center;
+    padding: 2px 0;
+    cursor: pointer;
+    border-radius: var(--met-radius-sm);
+    outline: none;
+    transition: background 0.1s;
+}
+.met-tree-row:hover { background: color-mix(in srgb, var(--met-primary) 8%, transparent); }
+.met-tree-row:focus-visible {
+    background: color-mix(in srgb, var(--met-primary) 12%, transparent);
+    box-shadow: inset 2px 0 0 var(--met-primary);
+}
+.met-tree-guides { display: inline-flex; white-space: pre; font-family: monospace; color: var(--met-muted); }
+.met-tree-guide { display: inline-block; width: 1.25em; text-align: center; }
+.met-tree-toggle {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 1.25em; flex-shrink: 0;
+    font-size: 0.75em; color: var(--met-muted);
+    cursor: pointer; user-select: none;
+}
+.met-tree-toggle:hover { color: var(--met-fg); }
+.met-tree-toggle-leaf { visibility: hidden; }
+.met-tree-icon { margin-right: var(--met-space-xs); }
+.met-tree-label { flex: 1; min-width: 0; }
+
+/* ── Command Palette ───────────────────────────────────────────── */
+
+.met-command-palette-backdrop {
+    position: fixed; inset: 0; z-index: 100;
+    display: flex; align-items: flex-start; justify-content: center;
+    padding-top: 15vh;
+    background: rgba(0,0,0,0.5);
+    backdrop-filter: blur(2px);
+}
+.met-command-palette {
+    width: 100%; max-width: 32rem;
+    background: var(--met-bg);
+    border: 1px solid var(--met-border);
+    border-radius: var(--met-radius-lg);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+    overflow: hidden;
+}
+.met-command-palette-input {
+    display: block; width: 100%;
+    padding: var(--met-space-sm) var(--met-space-md);
+    font-size: var(--met-font-lg); font-family: inherit;
+    color: var(--met-fg); background: transparent;
+    border: none; border-bottom: 1px solid var(--met-border);
+    outline: none;
+}
+.met-command-palette-list {
+    list-style: none; margin: 0; padding: var(--met-space-xs) 0;
+    max-height: 20rem; overflow-y: auto;
+}
+.met-command-palette-item {
+    display: flex; align-items: center; gap: var(--met-space-sm);
+    padding: var(--met-space-xs) var(--met-space-md);
+    cursor: pointer; font-size: var(--met-font-md);
+    color: var(--met-fg);
+}
+.met-command-palette-item:hover,
+.met-command-palette-item-active {
+    background: color-mix(in srgb, var(--met-primary) 12%, transparent);
+}
+.met-command-palette-icon { flex-shrink: 0; color: var(--met-muted); }
+.met-command-palette-label { flex: 1; min-width: 0; }
+.met-command-palette-label mark {
+    background: none; color: var(--met-primary); font-weight: 600;
+}
+.met-command-palette-shortcut {
+    font-size: var(--met-font-sm); color: var(--met-muted);
+    padding: 1px 6px;
+    background: color-mix(in srgb, var(--met-fg) 8%, transparent);
+    border-radius: var(--met-radius-sm);
+}
+.met-command-palette-empty {
+    padding: var(--met-space-md); text-align: center; color: var(--met-muted);
+}
+
+/* ── Date Picker ───────────────────────────────────────────────── */
+
+.met-datepicker {
+    display: inline-block;
+    background: var(--met-bg);
+    border: 1px solid var(--met-border);
+    border-radius: var(--met-radius-md);
+    padding: var(--met-space-sm);
+    color: var(--met-fg);
+}
+.met-datepicker-header {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: var(--met-space-sm);
+}
+.met-datepicker-title { font-weight: 600; font-size: var(--met-font-md); }
+.met-datepicker-nav {
+    background: none; border: none; cursor: pointer;
+    color: var(--met-muted); font-size: var(--met-font-md);
+    padding: 2px 6px; border-radius: var(--met-radius-sm);
+}
+.met-datepicker-nav:hover { color: var(--met-fg); background: color-mix(in srgb, var(--met-fg) 8%, transparent); }
+.met-datepicker-grid {
+    display: grid; grid-template-columns: repeat(7, 1fr);
+    gap: 2px; text-align: center;
+}
+.met-datepicker-weekday {
+    font-size: var(--met-font-sm); color: var(--met-muted);
+    font-weight: 600; padding: 4px 0;
+}
+.met-datepicker-blank { }
+.met-datepicker-day {
+    background: none; border: none; cursor: pointer;
+    padding: 6px 0; border-radius: var(--met-radius-sm);
+    color: var(--met-fg); font-size: var(--met-font-md);
+    font-family: inherit;
+}
+.met-datepicker-day:hover { background: color-mix(in srgb, var(--met-primary) 12%, transparent); }
+.met-datepicker-day-selected {
+    background: var(--met-primary) !important;
+    color: #fff; font-weight: 600;
+}
+.met-datepicker-day-today {
+    outline: 2px solid var(--met-primary); outline-offset: -2px;
+}
+.met-datepicker-day-weekend { color: var(--met-muted); }
+
+/* ── Time Input ────────────────────────────────────────────────── */
+
+.met-time-input {
+    display: inline-flex; align-items: center;
+}
+.met-time-input-field {
+    width: 3em; text-align: center;
+    padding: var(--met-space-xs); font: inherit;
+    color: var(--met-fg); background: var(--met-bg);
+    border: 1px solid var(--met-border);
+    border-radius: var(--met-radius-sm);
+    outline: none;
+    -moz-appearance: textfield;
+}
+.met-time-input-field::-webkit-outer-spin-button,
+.met-time-input-field::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+.met-time-input-field:focus { border-color: var(--met-primary); }
+.met-time-input-sep {
+    padding: 0 var(--met-space-xs); font-weight: 600; color: var(--met-muted);
+}
+
+/* ── Markdown ──────────────────────────────────────────────────── */
+
+.met-markdown { color: var(--met-fg); line-height: 1.6; }
+.met-md-h1 { font-size: 2em; font-weight: 700; margin: 0.8em 0 0.4em; border-bottom: 1px solid var(--met-border); padding-bottom: 0.2em; }
+.met-md-h2 { font-size: 1.5em; font-weight: 600; margin: 0.7em 0 0.35em; border-bottom: 1px solid var(--met-border); padding-bottom: 0.15em; }
+.met-md-h3 { font-size: 1.25em; font-weight: 600; margin: 0.6em 0 0.3em; }
+.met-md-h4 { font-size: 1.1em; font-weight: 600; margin: 0.5em 0 0.25em; }
+.met-md-h5 { font-size: 1em; font-weight: 600; margin: 0.5em 0 0.2em; }
+.met-md-h6 { font-size: 0.9em; font-weight: 600; margin: 0.5em 0 0.2em; color: var(--met-muted); }
+.met-md-p { margin: 0 0 1em; }
+.met-md-pre {
+    background: color-mix(in srgb, var(--met-fg) 5%, var(--met-bg));
+    border: 1px solid var(--met-border);
+    border-radius: var(--met-radius-md);
+    padding: var(--met-space-sm) var(--met-space-md);
+    overflow-x: auto; font-size: 0.9em;
+    margin: 0 0 1em;
+}
+.met-md-pre code { background: none; padding: 0; font-size: inherit; }
+.met-md-code {
+    background: color-mix(in srgb, var(--met-fg) 8%, transparent);
+    padding: 0.15em 0.4em;
+    border-radius: var(--met-radius-sm);
+    font-size: 0.9em;
+}
+.met-md-blockquote {
+    border-left: 3px solid var(--met-primary);
+    padding-left: var(--met-space-md);
+    color: var(--met-muted);
+    margin: 0 0 1em;
+}
+.met-md-ul, .met-md-ol { margin: 0 0 1em; padding-left: 1.5em; }
+.met-md-ul li, .met-md-ol li { margin-bottom: 0.25em; }
+.met-md-hr { border: none; border-top: 1px solid var(--met-border); margin: 1.5em 0; }
+.met-md-link { color: var(--met-primary); text-decoration: underline; }
+.met-md-link:hover { filter: brightness(1.15); }
+.met-md-img { max-width: 100%; border-radius: var(--met-radius-md); margin: 0.5em 0; }
+
 /* ── Animations ────────────────────────────────────────────────── */
 
 @keyframes met-spin   { to { transform: rotate(360deg); } }

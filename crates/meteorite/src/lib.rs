@@ -8,3 +8,7 @@ pub use met_layout;
 pub use met_overlay;
 pub use met_table;
 pub use met_widgets;
+pub use met_tree;
+pub use met_command_palette;
+pub use met_datepicker;
+pub use met_markdown;

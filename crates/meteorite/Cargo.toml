@@ -12,6 +12,10 @@ met-layout = { workspace = true }
 met-hooks = { workspace = true }
 met-table = { workspace = true }
 met-overlay = { workspace = true }
+met-tree = { workspace = true }
+met-command-palette = { workspace = true }
+met-datepicker = { workspace = true }
+met-markdown = { workspace = true }
 
 [features]
 default = []
