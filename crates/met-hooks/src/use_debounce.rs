@@ -1,27 +1,34 @@
 use dioxus::prelude::*;
-use std::time::Duration;
 
-/// Returns a signal that updates only after the given duration of inactivity.
+/// Returns a debounced signal.
 ///
-/// Each call to `set` resets the timer. The signal value only updates
-/// once the caller stops calling `set` for `delay` duration.
-pub fn use_debounce<T: Clone + PartialEq + 'static>(
-    initial: T,
-    delay: Duration,
-) -> (Signal<T>, impl Fn(T)) {
-    let mut value = use_signal(|| initial.clone());
-    let mut pending = use_signal(|| initial);
+/// `set` updates the pending value. The signal only propagates once
+/// `flush` is called (typically on a timer from the caller's side).
+pub fn use_debounce<T: Clone + PartialEq + 'static>(initial: T) -> UseDebounce<T> {
+    let value = use_signal(|| initial.clone());
+    let pending = use_signal(|| initial);
 
-    let set = move |new_val: T| {
-        pending.set(new_val.clone());
-        spawn(async move {
-            tokio::time::sleep(delay).await;
-            let current = pending.read().clone();
-            if *value.read() != current {
-                value.set(current);
-            }
-        });
-    };
+    UseDebounce { value, pending }
+}
 
-    (value, set)
+/// Handle returned by [`use_debounce`].
+#[derive(Clone, Copy)]
+pub struct UseDebounce<T: 'static> {
+    pub value: Signal<T>,
+    pending: Signal<T>,
+}
+
+impl<T: Clone + PartialEq + 'static> UseDebounce<T> {
+    /// Stage a new value without immediately propagating it.
+    pub fn set(&mut self, new_val: T) {
+        self.pending.set(new_val);
+    }
+
+    /// Propagate the pending value to the output signal.
+    pub fn flush(&mut self) {
+        let current = self.pending.read().clone();
+        if *self.value.read() != current {
+            self.value.set(current);
+        }
+    }
 }

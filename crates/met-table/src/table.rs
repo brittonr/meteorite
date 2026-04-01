@@ -19,19 +19,27 @@ pub fn DataTable(props: DataTableProps) -> Element {
         table { class: "{class}",
             thead {
                 tr {
-                    for col in props.columns.iter() {
-                        th {
-                            style: col.width.as_ref().map(|w| format!("width: {w}")).unwrap_or_default(),
-                            onclick: move |_| {
-                                if col.sortable {
-                                    if let Some(handler) = &props.on_sort {
-                                        handler.call((col.key.clone(), SortDirection::Ascending));
+                    for col in props.columns.clone().into_iter() {
+                        {
+                            let key = col.key.clone();
+                            let sortable = col.sortable;
+                            let on_sort = props.on_sort.clone();
+                            let w = col.width.as_ref().map(|w| format!("width: {w}")).unwrap_or_default();
+                            rsx! {
+                                th {
+                                    style: "{w}",
+                                    onclick: move |_| {
+                                        if sortable {
+                                            if let Some(ref handler) = on_sort {
+                                                handler.call((key.clone(), SortDirection::Ascending));
+                                            }
+                                        }
+                                    },
+                                    "{col.label}"
+                                    if col.sortable {
+                                        span { class: "met-table-sort-icon", " ↕" }
                                     }
                                 }
-                            },
-                            "{col.label}"
-                            if col.sortable {
-                                span { class: "met-table-sort-icon", " ↕" }
                             }
                         }
                     }
