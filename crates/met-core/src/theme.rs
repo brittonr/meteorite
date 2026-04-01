@@ -1,9 +1,30 @@
+use std::collections::BTreeMap;
+
 use dioxus::prelude::*;
 
 /// Bundled component stylesheet.
 const METEORITE_CSS: &str = include_str!("../assets/meteorite.css");
 
+// ═══════════════════════════════════════════════════════════════════
+// Palette
+// ═══════════════════════════════════════════════════════════════════
+
 /// Color palette for a theme.
+///
+/// The built-in fields cover the standard UI variants. Add arbitrary
+/// colors via [`extra`](Palette::extra) — each entry becomes a
+/// `--met-{key}` CSS variable and can be referenced with
+/// [`Variant::Custom`](crate::Variant::Custom).
+///
+/// ```rust,ignore
+/// Palette {
+///     extra: BTreeMap::from([
+///         ("brand".into(), "#ff6600".into()),
+///         ("accent".into(), "#9333ea".into()),
+///     ]),
+///     ..Palette::dark()
+/// }
+/// ```
 #[derive(Debug, Clone, PartialEq)]
 pub struct Palette {
     pub bg: String,
@@ -15,18 +36,63 @@ pub struct Palette {
     pub danger: String,
     pub muted: String,
     pub border: String,
+    /// Arbitrary extra colors. Each key `k` emits `--met-{k}` and
+    /// generates a `.met-{k}` variant class in the CSS output.
+    pub extra: BTreeMap<String, String>,
 }
 
-/// Theme configuration.
-#[derive(Debug, Clone, PartialEq)]
-pub struct Theme {
-    pub name: String,
-    pub palette: Palette,
-    /// Per-component radius, spacing, font-size overrides.
-    pub tokens: Tokens,
+impl Palette {
+    /// Dark palette defaults (same as `Theme::dark()`).
+    pub fn dark() -> Self {
+        Palette {
+            bg: "#0a0a0a".into(),
+            fg: "#fafafa".into(),
+            primary: "#3b82f6".into(),
+            secondary: "#6366f1".into(),
+            success: "#22c55e".into(),
+            warning: "#eab308".into(),
+            danger: "#ef4444".into(),
+            muted: "#71717a".into(),
+            border: "#27272a".into(),
+            extra: BTreeMap::new(),
+        }
+    }
+
+    /// Light palette defaults (same as `Theme::light()`).
+    pub fn light() -> Self {
+        Palette {
+            bg: "#ffffff".into(),
+            fg: "#09090b".into(),
+            primary: "#2563eb".into(),
+            secondary: "#4f46e5".into(),
+            success: "#16a34a".into(),
+            warning: "#ca8a04".into(),
+            danger: "#dc2626".into(),
+            muted: "#a1a1aa".into(),
+            border: "#e4e4e7".into(),
+            extra: BTreeMap::new(),
+        }
+    }
 }
+
+// ═══════════════════════════════════════════════════════════════════
+// Tokens
+// ═══════════════════════════════════════════════════════════════════
 
 /// Design tokens for spacing, radius, and typography.
+///
+/// Add arbitrary tokens via [`extra`](Tokens::extra) — each entry
+/// becomes a `--met-{key}` CSS variable.
+///
+/// ```rust,ignore
+/// Tokens {
+///     extra: BTreeMap::from([
+///         ("shadow-sm".into(), "0 1px 2px rgba(0,0,0,0.05)".into()),
+///         ("transition".into(), "0.15s ease".into()),
+///     ]),
+///     ..Tokens::default()
+/// }
+/// ```
 #[derive(Debug, Clone, PartialEq)]
 pub struct Tokens {
     pub radius_sm: String,
@@ -40,6 +106,8 @@ pub struct Tokens {
     pub space_md: String,
     pub space_lg: String,
     pub space_xl: String,
+    /// Arbitrary extra tokens. Each key `k` emits `--met-{k}`.
+    pub extra: BTreeMap<String, String>,
 }
 
 impl Default for Tokens {
@@ -56,8 +124,45 @@ impl Default for Tokens {
             space_md: "16px".into(),
             space_lg: "24px".into(),
             space_xl: "32px".into(),
+            extra: BTreeMap::new(),
         }
     }
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// Theme
+// ═══════════════════════════════════════════════════════════════════
+
+/// Theme configuration.
+///
+/// # Quick start
+/// ```rust,ignore
+/// // Use a preset
+/// ThemeProvider { theme: Theme::dark(), App {} }
+///
+/// // Swap at runtime
+/// let mut theme = use_signal(|| Theme::dark());
+/// rsx! {
+///     ThemeProvider { theme: theme(),
+///         button { onclick: move |_| theme.set(Theme::light()), "Toggle" }
+///     }
+/// }
+///
+/// // Custom palette + extra tokens
+/// ThemeProvider {
+///     theme: Theme::builder("corporate")
+///         .palette(Palette { primary: "#003366".into(), ..Palette::light() })
+///         .extra_color("brand", "#ff6600")
+///         .extra_token("shadow-lg", "0 8px 24px rgba(0,0,0,0.15)")
+///         .build(),
+///     App {}
+/// }
+/// ```
+#[derive(Debug, Clone, PartialEq)]
+pub struct Theme {
+    pub name: String,
+    pub palette: Palette,
+    pub tokens: Tokens,
 }
 
 impl Default for Theme {
@@ -70,17 +175,7 @@ impl Theme {
     pub fn dark() -> Self {
         Theme {
             name: "dark".into(),
-            palette: Palette {
-                bg: "#0a0a0a".into(),
-                fg: "#fafafa".into(),
-                primary: "#3b82f6".into(),
-                secondary: "#6366f1".into(),
-                success: "#22c55e".into(),
-                warning: "#eab308".into(),
-                danger: "#ef4444".into(),
-                muted: "#71717a".into(),
-                border: "#27272a".into(),
-            },
+            palette: Palette::dark(),
             tokens: Tokens::default(),
         }
     }
@@ -88,17 +183,7 @@ impl Theme {
     pub fn light() -> Self {
         Theme {
             name: "light".into(),
-            palette: Palette {
-                bg: "#ffffff".into(),
-                fg: "#09090b".into(),
-                primary: "#2563eb".into(),
-                secondary: "#4f46e5".into(),
-                success: "#16a34a".into(),
-                warning: "#ca8a04".into(),
-                danger: "#dc2626".into(),
-                muted: "#a1a1aa".into(),
-                border: "#e4e4e7".into(),
-            },
+            palette: Palette::light(),
             tokens: Tokens::default(),
         }
     }
@@ -112,12 +197,24 @@ impl Theme {
         }
     }
 
+    /// Start a builder for a custom theme.
+    pub fn builder(name: impl Into<String>) -> ThemeBuilder {
+        ThemeBuilder {
+            name: name.into(),
+            palette: Palette::dark(),
+            tokens: Tokens::default(),
+        }
+    }
+
     /// Emit CSS custom properties for this theme.
-    /// Inject the returned string into a `<style>` tag or the `:root` selector.
+    ///
+    /// Includes built-in variables, extra palette colors (with
+    /// matching variant classes), and extra tokens.
     pub fn to_css_vars(&self) -> String {
         let p = &self.palette;
         let t = &self.tokens;
-        format!(
+
+        let mut css = format!(
             r#":root {{
   --met-bg: {bg};
   --met-fg: {fg};
@@ -138,8 +235,7 @@ impl Theme {
   --met-space-sm: {s_sm};
   --met-space-md: {s_md};
   --met-space-lg: {s_lg};
-  --met-space-xl: {s_xl};
-}}"#,
+  --met-space-xl: {s_xl};"#,
             bg = p.bg,
             fg = p.fg,
             primary = p.primary,
@@ -160,10 +256,31 @@ impl Theme {
             s_md = t.space_md,
             s_lg = t.space_lg,
             s_xl = t.space_xl,
-        )
+        );
+
+        // Extra palette colors → CSS variables
+        for (key, val) in &p.extra {
+            css.push_str(&format!("\n  --met-{key}: {val};"));
+        }
+
+        // Extra tokens → CSS variables
+        for (key, val) in &t.extra {
+            css.push_str(&format!("\n  --met-{key}: {val};"));
+        }
+
+        css.push_str("\n}\n");
+
+        // Extra palette colors → variant classes
+        for (key, _) in &p.extra {
+            css.push_str(&format!(
+                ".met-{key} {{ --_c: var(--met-{key}); --_bg: color-mix(in srgb, var(--met-{key}) 15%, transparent); }}\n"
+            ));
+        }
+
+        css
     }
 
-    /// Resolve a Variant to its palette color.
+    /// Resolve a Variant to its palette color string.
     pub fn variant_color(&self, variant: &crate::Variant) -> &str {
         match variant {
             crate::Variant::Default => &self.palette.fg,
@@ -173,15 +290,76 @@ impl Theme {
             crate::Variant::Warning => &self.palette.warning,
             crate::Variant::Danger => &self.palette.danger,
             crate::Variant::Ghost => "transparent",
+            crate::Variant::Custom(name) => self
+                .palette
+                .extra
+                .get(name.as_str())
+                .map(|s| s.as_str())
+                .unwrap_or(&self.palette.fg),
         }
     }
 }
 
-// ---------------------------------------------------------------------------
-// Context helpers
-// ---------------------------------------------------------------------------
+// ═══════════════════════════════════════════════════════════════════
+// ThemeBuilder
+// ═══════════════════════════════════════════════════════════════════
 
-/// Read the current theme from context.
+/// Fluent builder for constructing a [`Theme`].
+///
+/// ```rust,ignore
+/// let theme = Theme::builder("ocean")
+///     .palette(Palette { primary: "#0ea5e9".into(), ..Palette::dark() })
+///     .extra_color("brand", "#ff6600")
+///     .extra_color("accent", "#9333ea")
+///     .extra_token("shadow-lg", "0 8px 24px rgba(0,0,0,0.15)")
+///     .tokens(Tokens { radius_md: "8px".into(), ..Tokens::default() })
+///     .build();
+/// ```
+pub struct ThemeBuilder {
+    name: String,
+    palette: Palette,
+    tokens: Tokens,
+}
+
+impl ThemeBuilder {
+    /// Set the full palette (you can spread defaults with `..Palette::dark()`).
+    pub fn palette(mut self, palette: Palette) -> Self {
+        self.palette = palette;
+        self
+    }
+
+    /// Set the full token set (spread defaults with `..Tokens::default()`).
+    pub fn tokens(mut self, tokens: Tokens) -> Self {
+        self.tokens = tokens;
+        self
+    }
+
+    /// Add a custom color. Generates `--met-{name}` and `.met-{name}` class.
+    pub fn extra_color(mut self, name: impl Into<String>, value: impl Into<String>) -> Self {
+        self.palette.extra.insert(name.into(), value.into());
+        self
+    }
+
+    /// Add a custom token. Generates `--met-{name}`.
+    pub fn extra_token(mut self, name: impl Into<String>, value: impl Into<String>) -> Self {
+        self.tokens.extra.insert(name.into(), value.into());
+        self
+    }
+
+    pub fn build(self) -> Theme {
+        Theme {
+            name: self.name,
+            palette: self.palette,
+            tokens: self.tokens,
+        }
+    }
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// Context helpers
+// ═══════════════════════════════════════════════════════════════════
+
+/// Read the current theme from context (clones on each call).
 /// Panics if no `ThemeProvider` is above this component in the tree.
 pub fn use_theme() -> Theme {
     use_context::<Signal<Theme>>().read().clone()
@@ -192,9 +370,9 @@ pub fn use_theme_signal() -> Signal<Theme> {
     use_context::<Signal<Theme>>()
 }
 
-// ---------------------------------------------------------------------------
-// ThemeProvider component
-// ---------------------------------------------------------------------------
+// ═══════════════════════════════════════════════════════════════════
+// ThemeProvider
+// ═══════════════════════════════════════════════════════════════════
 
 #[derive(Props, Clone, PartialEq)]
 pub struct ThemeProviderProps {
@@ -203,26 +381,38 @@ pub struct ThemeProviderProps {
     pub children: Element,
 }
 
-/// Provides a `Theme` to the component subtree via context.
+/// Provides a [`Theme`] to the component subtree via context.
 ///
 /// Wrap your app root (or any subtree) to set the active theme.
-/// Nested providers override the parent -- useful for sections
-/// that need a different palette.
+/// Changing the `theme` prop at runtime re-renders all subscribers.
+/// Nested providers override the parent.
 ///
 /// ```rust,ignore
+/// // Static
 /// rsx! {
-///     ThemeProvider { theme: Theme::light(),
-///         // everything in here sees the light theme
+///     ThemeProvider { theme: Theme::light(), MyApp {} }
+/// }
+///
+/// // Runtime switching
+/// let mut theme = use_signal(|| Theme::dark());
+/// rsx! {
+///     ThemeProvider { theme: theme(),
+///         button { onclick: move |_| theme.set(Theme::light()), "Go light" }
 ///         MyApp {}
 ///     }
 /// }
 /// ```
 #[component]
 pub fn ThemeProvider(props: ThemeProviderProps) -> Element {
-    let theme_signal = use_signal(|| props.theme.clone());
-    use_context_provider(|| theme_signal);
+    // Provide the signal once; sync it with the prop on every render.
+    let mut theme_signal = use_context_provider(|| Signal::new(props.theme.clone()));
 
-    let vars_css = props.theme.to_css_vars();
+    // Keep the signal in sync when the prop changes (runtime switching).
+    use_effect(move || {
+        theme_signal.set(props.theme.clone());
+    });
+
+    let vars_css = use_memo(move || theme_signal.read().to_css_vars());
 
     rsx! {
         style { "{vars_css}" }
