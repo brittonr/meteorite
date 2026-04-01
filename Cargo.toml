@@ -12,6 +12,9 @@ members = [
     "crates/met-command-palette",
     "crates/met-datepicker",
     "crates/met-markdown",
+    "crates/met-docking",
+    "crates/met-cache",
+    "crates/met-leaderkey",
     "crates/showcase",
 ]
 
@@ -29,6 +32,8 @@ dioxus-primitives = { git = "https://github.com/DioxusLabs/components.git" }
 tracing = "0.1"
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
+thiserror = "2"
+web-time = "1.1"
 
 # internal crates
 met-core = { path = "crates/met-core" }
@@ -41,4 +46,7 @@ met-tree = { path = "crates/met-tree" }
 met-command-palette = { path = "crates/met-command-palette" }
 met-datepicker = { path = "crates/met-datepicker" }
 met-markdown = { path = "crates/met-markdown" }
+met-docking = { path = "crates/met-docking" }
+met-cache = { path = "crates/met-cache" }
+met-leaderkey = { path = "crates/met-leaderkey" }
 ratcore = { path = "../ratcore" }

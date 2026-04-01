@@ -17,6 +17,9 @@
 - `met-command-palette` has a fuzzy-search ⌘K overlay (fuzzy scoring is pure logic, no UI deps)
 - `met-datepicker` has a calendar date picker and time input
 - `met-markdown` has a markdown-to-Dioxus renderer (parse.rs is pure logic, render.rs is the component)
+- `met-docking` has a framework-agnostic panel tiling engine (tree-based splits, zones, drag-drop, presets, undo/redo) — no UI deps, pure geometry
+- `met-cache` has a multi-tier in-memory cache with eviction scoring, access prediction, and adaptive sizing — no UI deps
+- `met-leaderkey` has a helix-style leader key popup menu (Space → which-key overlay); state machine lives in `ratcore::leaderkey`, shared with `rat-leaderkey` in subwayrat
 - `meteorite` re-exports all crates (like dioxus re-exports its sub-crates)
 - `showcase` is the demo app (binary, depends on everything)
 

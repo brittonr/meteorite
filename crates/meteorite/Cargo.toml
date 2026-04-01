@@ -16,6 +16,9 @@ met-tree = { workspace = true }
 met-command-palette = { workspace = true }
 met-datepicker = { workspace = true }
 met-markdown = { workspace = true }
+met-docking = { workspace = true }
+met-cache = { workspace = true }
+met-leaderkey = { workspace = true }
 
 [features]
 default = []

@@ -1,6 +1,8 @@
 //! UI components for Dioxus: button, input, checkbox, select, slider, badge,
-//! alert, card, divider, icon, spinner, loader, form, tabs.
+//! alert, card, divider, icon, spinner, loader, form, tabs, textarea, radio,
+//! accordion, searchable select, status badge.
 
+pub mod accordion;
 pub mod alert;
 pub mod badge;
 pub mod button;
@@ -13,12 +15,17 @@ pub mod icon;
 pub mod input;
 pub mod loader;
 pub mod progress;
+pub mod radio;
+pub mod searchable_select;
 pub mod select;
 pub mod slider;
 pub mod spinner;
+pub mod status_badge;
 pub mod switch;
 pub mod tabs;
+pub mod textarea;
 
+pub use accordion::{Accordion, AccordionSection};
 pub use alert::Alert;
 pub use badge::Badge;
 pub use button::Button;
@@ -33,8 +40,12 @@ pub use icon::{Icon, IconName};
 pub use input::TextInput;
 pub use loader::{ContentLoader, Loader, LoaderType, SkeletonLoader};
 pub use progress::{Progress, ProgressIndicator};
+pub use radio::{RadioGroup, RadioOption, RadioOrientation};
+pub use searchable_select::SearchableSelect;
 pub use select::Select;
 pub use slider::{Slider, SliderValue};
 pub use spinner::{LoadingOverlay, Spinner};
+pub use status_badge::{StatusBadge, StatusVariant};
 pub use switch::Switch;
 pub use tabs::Tabs;
+pub use textarea::Textarea;

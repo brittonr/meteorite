@@ -12,3 +12,6 @@ pub use met_tree;
 pub use met_command_palette;
 pub use met_datepicker;
 pub use met_markdown;
+pub use met_docking;
+pub use met_cache;
+pub use met_leaderkey;

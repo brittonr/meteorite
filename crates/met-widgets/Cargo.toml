@@ -9,7 +9,8 @@ description = "UI components for Dioxus: button, input, checkbox, select, slider
 dioxus = { workspace = true }
 dioxus-primitives = { workspace = true }
 met-core = { workspace = true }
+gloo-timers = { version = "0.3", optional = true }
 
 [features]
 default = []
-web = ["dioxus-primitives/web"]
+web = ["dioxus-primitives/web", "gloo-timers"]
