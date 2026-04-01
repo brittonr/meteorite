@@ -1,0 +1,9 @@
+[package]
+name = "met-core"
+version = "0.1.0"
+edition.workspace = true
+license.workspace = true
+description = "Core primitives, theming, and shared types for meteorite"
+
+[dependencies]
+dioxus = { workspace = true }

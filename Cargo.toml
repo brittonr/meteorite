@@ -1,0 +1,30 @@
+[workspace]
+resolver = "2"
+members = [
+    "crates/meteorite",
+    "crates/met-core",
+    "crates/met-widgets",
+    "crates/met-layout",
+    "crates/met-hooks",
+    "crates/met-table",
+    "crates/met-overlay",
+    "crates/showcase",
+]
+
+[workspace.package]
+edition = "2024"
+license = "MIT"
+
+[workspace.dependencies]
+dioxus = "0.6"
+tracing = "0.1"
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+
+# internal crates
+met-core = { path = "crates/met-core" }
+met-widgets = { path = "crates/met-widgets" }
+met-layout = { path = "crates/met-layout" }
+met-hooks = { path = "crates/met-hooks" }
+met-table = { path = "crates/met-table" }
+met-overlay = { path = "crates/met-overlay" }

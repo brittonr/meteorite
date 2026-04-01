@@ -1,0 +1,14 @@
+[package]
+name = "meteorite"
+version = "0.1.0"
+edition.workspace = true
+license.workspace = true
+description = "UI component library for Dioxus -- re-exports all meteorite crates"
+
+[dependencies]
+met-core = { workspace = true }
+met-widgets = { workspace = true }
+met-layout = { workspace = true }
+met-hooks = { workspace = true }
+met-table = { workspace = true }
+met-overlay = { workspace = true }

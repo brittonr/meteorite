@@ -1,0 +1,10 @@
+[package]
+name = "met-overlay"
+version = "0.1.0"
+edition.workspace = true
+license.workspace = true
+description = "Overlay components for Dioxus: modal, dialog, popover, tooltip, toast"
+
+[dependencies]
+dioxus = { workspace = true }
+met-core = { workspace = true }
