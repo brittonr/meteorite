@@ -78,6 +78,8 @@
             cargo-nextest
             cargo-watch
             rust-analyzer
+            dioxus-cli
+            wasm-bindgen-cli
           ];
 
           inputsFrom = [ meteorite ];

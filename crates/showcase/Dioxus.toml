@@ -1,0 +1,8 @@
+[application]
+name = "showcase"
+
+[web.app]
+title = "meteorite showcase"
+
+[web.watcher]
+watch_path = ["src", "../../crates"]

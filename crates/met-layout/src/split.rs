@@ -24,19 +24,16 @@ pub struct SplitProps {
 pub fn Split(props: SplitProps) -> Element {
     let pct = (props.ratio.clamp(0.0, 1.0) * 100.0) as u32;
     let rest = 100 - pct;
-    let flex_dir = match props.direction {
-        SplitDirection::Horizontal => "row",
-        SplitDirection::Vertical => "column",
+    let dir = match props.direction {
+        SplitDirection::Horizontal => "met-split-horizontal",
+        SplitDirection::Vertical => "met-split-vertical",
     };
-    let class = format!("met-split {}", props.class);
 
     rsx! {
-        div {
-            class: "{class}",
-            style: "display: flex; flex-direction: {flex_dir}; width: 100%; height: 100%;",
-            div { style: "flex: {pct}; overflow: auto;" }
-            div { class: "met-split-handle", style: "flex: 0 0 4px; cursor: col-resize;" }
-            div { style: "flex: {rest}; overflow: auto;" }
+        div { class: "met-split {dir} {props.class}",
+            div { class: "met-split-pane", style: "flex: {pct};" }
+            div { class: "met-split-handle" }
+            div { class: "met-split-pane", style: "flex: {rest};" }
         }
     }
 }

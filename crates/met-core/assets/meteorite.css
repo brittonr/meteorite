@@ -483,6 +483,44 @@
 [data-component="toast"][data-type="warning"] { border-color: var(--met-warning); }
 [data-component="toast"][data-type="info"]    { border-color: var(--met-primary); }
 
+/* ── Layout: Stack ─────────────────────────────────────────────── */
+
+.met-vstack { display: flex; flex-direction: column; }
+.met-hstack { display: flex; flex-direction: row; align-items: center; }
+
+/* ── Layout: Container ─────────────────────────────────────────── */
+
+.met-container { margin: 0 auto; padding: 0 var(--met-space-md); }
+
+/* ── Layout: Grid ──────────────────────────────────────────────── */
+
+.met-grid { display: grid; }
+
+/* ── Layout: Sidebar ───────────────────────────────────────────── */
+
+.met-sidebar {
+    overflow: hidden;
+    transition: width 0.2s;
+    background: var(--met-bg);
+    border-right: 1px solid var(--met-border);
+}
+.met-sidebar-collapsed { width: 0 !important; }
+
+/* ── Layout: Split ─────────────────────────────────────────────── */
+
+.met-split { display: flex; width: 100%; height: 100%; }
+.met-split-horizontal { flex-direction: row; }
+.met-split-vertical { flex-direction: column; }
+.met-split-pane { overflow: auto; }
+.met-split-handle {
+    flex: 0 0 4px;
+    background: var(--met-border);
+    transition: background 0.15s;
+}
+.met-split-handle:hover { background: var(--met-primary); }
+.met-split-horizontal > .met-split-handle { cursor: col-resize; }
+.met-split-vertical > .met-split-handle { cursor: row-resize; }
+
 /* ── Animations ────────────────────────────────────────────────── */
 
 @keyframes met-spin   { to { transform: rotate(360deg); } }

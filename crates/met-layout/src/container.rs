@@ -2,6 +2,7 @@ use dioxus::prelude::*;
 
 #[derive(Props, Clone, PartialEq)]
 pub struct ContainerProps {
+    /// Max width constraint. Defaults to 1200px.
     #[props(default = "1200px".to_string())]
     pub max_width: String,
     #[props(default)]
@@ -12,12 +13,10 @@ pub struct ContainerProps {
 /// Centered container with max width.
 #[component]
 pub fn Container(props: ContainerProps) -> Element {
-    let class = format!("met-container {}", props.class);
-
     rsx! {
         div {
-            class: "{class}",
-            style: "max-width: {props.max_width}; margin: 0 auto; padding: 0 16px;",
+            class: "met-container {props.class}",
+            style: "max-width: {props.max_width};",
             {props.children}
         }
     }

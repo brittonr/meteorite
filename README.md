@@ -1,49 +1,154 @@
-# meteorite
+# ☄️ meteorite
 
-UI component library for [Dioxus](https://dioxuslabs.com/).
+UI component library for [Dioxus](https://dioxuslabs.com). Themed wrappers around [dioxus-primitives](https://github.com/DioxusLabs/components) with pluggable theming via CSS custom properties.
 
-Workspace of reusable primitives and components, structured similarly to
-[subwayrat](https://github.com/brittonr/subwayrat) (ratatui widgets) but
-targeting Dioxus's reactive, cross-platform model.
+## Quick Start
+
+```rust
+use dioxus::prelude::*;
+use meteorite::met_core::{Theme, ThemeProvider, Variant};
+use meteorite::met_widgets::Button;
+
+fn app() -> Element {
+    rsx! {
+        ThemeProvider { theme: Theme::dark(),
+            Button { variant: Variant::Primary, "Click me" }
+        }
+    }
+}
+```
 
 ## Crates
 
-| Crate | What it does |
-|-------|-------------|
-| `met-core` | Theming, size/variant enums, shared types |
-| `met-widgets` | Button, input, checkbox, select, slider, switch, badge, progress |
-| `met-layout` | VStack, HStack, Grid, Container, Sidebar, Split |
+| Crate | Description |
+|---|---|
+| `met-core` | Theme, palette, tokens, variant/size enums, CSS stylesheet |
+| `met-widgets` | Button, Badge, Alert, Card, Icon, Input, Select, Checkbox, Switch, Slider, Progress, Tabs, Spinner, Loader, Form, FormField, Divider |
+| `met-overlay` | Tooltip, Dialog, Modal, Popover, ContextMenu, Toast |
+| `met-layout` | VStack, HStack, Container, Grid, Sidebar, Split |
 | `met-hooks` | use_debounce, use_toggle, use_local_storage |
-| `met-table` | Data table with sortable columns |
-| `met-overlay` | Modal, Dialog, Tooltip, Toast |
-| `meteorite` | Re-export crate -- pulls in everything |
-| `showcase` | Demo app |
+| `met-table` | Data table with columns |
+| `meteorite` | Umbrella re-export of all crates |
 
-## Quick start
+## Components (19)
+
+### Widgets (`met-widgets`)
+- **Button** — variants, sizes, loading, disabled
+- **Badge** — inline status labels
+- **Alert** — dismissible banners (success/warning/danger/info)
+- **Card** — container with Header, Body, Footer
+- **Icon** — 37 SVG icons (Feather-style), 5 sizes
+- **TextInput** — text field
+- **Select** — dropdown with keyboard nav, typeahead (wraps primitives)
+- **Checkbox** — tri-state with indicator (wraps primitives)
+- **Switch** — toggle with thumb (wraps primitives)
+- **Slider** — track + range + thumb (wraps primitives)
+- **Progress** — bar with indicator (wraps primitives)
+- **Tabs** — tab list + content panels (wraps primitives)
+- **Spinner** — SVG animated spinner + LoadingOverlay
+- **Loader** — dots, bars, pulse, skeleton patterns + ContentLoader
+- **Divider** — horizontal/vertical separator (wraps primitives Separator)
+- **Form** — FormGroup, FormLabel, FormInput, FormTextarea, FormSelect, FormCheckbox, FormError
+- **FormField** — compound field: label + input + validation + help text
+
+### Overlays (`met-overlay`)
+- **Tooltip** — hover content (wraps primitives)
+- **Dialog** — modal/non-modal with focus trapping (wraps primitives)
+- **Modal** — always-modal convenience alias
+- **Popover** — triggered flyout (wraps primitives)
+- **ContextMenu** — right-click menu (wraps primitives)
+- **Toast** — notification system with auto-dismiss (wraps primitives)
+
+### Layout (`met-layout`)
+- **VStack / HStack** — flex column/row with gap
+- **Container** — centered max-width wrapper
+- **Grid** — CSS grid with column count
+- **Sidebar** — collapsible side panel
+- **Split** — horizontal/vertical split pane
+
+## Theming
+
+All components read from `--met-*` CSS custom properties. Wrap your app in `ThemeProvider`:
+
+```rust
+// Presets
+ThemeProvider { theme: Theme::dark(), /* ... */ }
+ThemeProvider { theme: Theme::light(), /* ... */ }
+
+// Runtime switching
+let mut theme = use_signal(|| Theme::dark());
+rsx! {
+    ThemeProvider { theme: theme(),
+        button { onclick: move |_| theme.set(Theme::light()), "Toggle" }
+    }
+}
+```
+
+### Custom themes
+
+```rust
+let theme = Theme::builder("corporate")
+    .palette(Palette { primary: "#003366".into(), ..Palette::light() })
+    .extra_color("brand", "#ff6600")      // → --met-brand + .met-brand class
+    .extra_color("accent", "#9333ea")     // → --met-accent + .met-accent class
+    .extra_token("shadow-lg", "0 8px 24px rgba(0,0,0,0.15)")  // → --met-shadow-lg
+    .build();
+
+// Use custom variants
+Button { variant: Variant::Custom("brand".into()), "Buy now" }
+```
+
+### Nested themes
+
+```rust
+ThemeProvider { theme: Theme::dark(),
+    Sidebar {}
+    ThemeProvider { theme: Theme::light(),
+        MainContent {}  // sees light theme
+    }
+}
+```
+
+### Reading theme in components
+
+```rust
+fn MyComponent() -> Element {
+    let theme = use_theme();           // clones Theme
+    let sig = use_theme_signal();      // Signal<Theme>, no clone
+    // ...
+}
+```
+
+## Features
+
+```toml
+[dependencies]
+meteorite = { path = "..." }              # renderer-agnostic
+meteorite = { path = "...", features = ["web"] }  # enables dioxus-primitives/web
+```
+
+The `web` feature gates `dioxus-primitives/web` (time/wasm-bindgen). Library crates stay cross-platform by default.
+
+## Running the Showcase
 
 ```bash
-nix develop
-cargo check
-cargo nextest run
+cd crates/showcase
+dx serve
 ```
 
-## Usage
+## Architecture
 
-Add the umbrella crate to pull in everything:
-
-```toml
-[dependencies]
-meteorite = { path = "crates/meteorite" }
+```
+ThemeProvider { theme: Theme::dark() }
+  │
+  ├─ <style> :root { --met-primary: #3b82f6; ... }   ← palette + tokens
+  ├─ <style> .met-btn { color: var(--_c); ... }       ← component CSS
+  │
+  └─ Button { variant: Variant::Primary }
+       ↓ class="met-btn met-primary"
+       ↓ .met-primary → --_c: var(--met-primary)
+       ↓ .met-btn → color: var(--_c)
+       → picks up #3b82f6
 ```
 
-Or pick individual crates:
-
-```toml
-[dependencies]
-met-widgets = { path = "crates/met-widgets" }
-met-layout = { path = "crates/met-layout" }
-```
-
-## License
-
-MIT
+Components emit `met-*` class names. Variant classes set `--_c` (color) and `--_bg` (background) local properties. Component rules reference those locals. Swap the theme and everything recolors.

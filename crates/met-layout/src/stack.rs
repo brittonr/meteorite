@@ -2,7 +2,8 @@ use dioxus::prelude::*;
 
 #[derive(Props, Clone, PartialEq)]
 pub struct StackProps {
-    #[props(default = "8px".to_string())]
+    /// Gap between items. Defaults to `var(--met-space-sm)`.
+    #[props(default = "var(--met-space-sm)".to_string())]
     pub gap: String,
     #[props(default)]
     pub class: String,
@@ -12,12 +13,10 @@ pub struct StackProps {
 /// Vertical stack layout.
 #[component]
 pub fn VStack(props: StackProps) -> Element {
-    let class = format!("met-vstack {}", props.class);
-
     rsx! {
         div {
-            class: "{class}",
-            style: "display: flex; flex-direction: column; gap: {props.gap};",
+            class: "met-vstack {props.class}",
+            style: "gap: {props.gap};",
             {props.children}
         }
     }
@@ -26,12 +25,10 @@ pub fn VStack(props: StackProps) -> Element {
 /// Horizontal stack layout.
 #[component]
 pub fn HStack(props: StackProps) -> Element {
-    let class = format!("met-hstack {}", props.class);
-
     rsx! {
         div {
-            class: "{class}",
-            style: "display: flex; flex-direction: row; gap: {props.gap}; align-items: center;",
+            class: "met-hstack {props.class}",
+            style: "gap: {props.gap};",
             {props.children}
         }
     }
