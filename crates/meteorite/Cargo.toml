@@ -12,3 +12,7 @@ met-layout = { workspace = true }
 met-hooks = { workspace = true }
 met-table = { workspace = true }
 met-overlay = { workspace = true }
+
+[features]
+default = []
+web = ["met-widgets/web", "met-overlay/web"]

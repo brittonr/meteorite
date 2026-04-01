@@ -1,45 +1,31 @@
-use dioxus::prelude::*;
+//! Themed toast notifications wrapping `dioxus_primitives::toast`.
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum ToastLevel {
-    Info,
-    Success,
-    Warning,
-    Error,
-}
+pub use dioxus_primitives::toast::{ToastOptions, ToastProvider, ToastType, Toasts, use_toast};
 
-#[derive(Props, Clone, PartialEq)]
-pub struct ToastProps {
-    pub message: String,
-    #[props(default = ToastLevel::Info)]
-    pub level: ToastLevel,
-    #[props(default)]
-    pub class: String,
-    pub on_dismiss: Option<EventHandler<()>>,
-}
-
-#[component]
-pub fn Toast(props: ToastProps) -> Element {
-    let level_class = match props.level {
-        ToastLevel::Info => "met-toast-info",
-        ToastLevel::Success => "met-toast-success",
-        ToastLevel::Warning => "met-toast-warning",
-        ToastLevel::Error => "met-toast-error",
-    };
-    let class = format!("met-toast {} {}", level_class, props.class);
-
-    rsx! {
-        div { class: "{class}", role: "alert",
-            span { "{props.message}" }
-            button {
-                class: "met-toast-dismiss",
-                onclick: move |_| {
-                    if let Some(handler) = &props.on_dismiss {
-                        handler.call(());
-                    }
-                },
-                "×"
-            }
-        }
-    }
-}
+// Re-export the primitives directly — the styling is handled via CSS
+// on the `data-type` attribute that the primitive already emits.
+//
+// Usage:
+// ```
+// use met_overlay::toast::{ToastProvider, use_toast, ToastType};
+//
+// #[component]
+// fn App() -> Element {
+//     rsx! {
+//         ToastProvider {
+//             MyPage {}
+//         }
+//     }
+// }
+//
+// #[component]
+// fn MyPage() -> Element {
+//     let toast = use_toast();
+//     rsx! {
+//         button {
+//             onclick: move |_| toast.add("Saved", None, ToastType::Success, None, false),
+//             "Save"
+//         }
+//     }
+// }
+// ```

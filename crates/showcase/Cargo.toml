@@ -7,6 +7,7 @@ description = "Demo app showcasing meteorite components"
 
 [dependencies]
 dioxus = { workspace = true, features = ["web"] }
+dioxus-primitives = { workspace = true, features = ["web"] }
 met-core = { workspace = true }
 met-widgets = { workspace = true }
 met-layout = { workspace = true }

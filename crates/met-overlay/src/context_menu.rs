@@ -1,11 +1,13 @@
-//! Themed dialog wrapping `dioxus_primitives::dialog`.
+//! Themed context menu wrapping `dioxus_primitives::context_menu`.
 
-pub use dioxus_primitives::dialog::{DialogContent, DialogDescription, DialogTitle};
+pub use dioxus_primitives::context_menu::{
+    ContextMenuContent, ContextMenuItem, ContextMenuTrigger,
+};
 
 use dioxus::prelude::*;
 
 #[derive(Props, Clone, PartialEq)]
-pub struct DialogProps {
+pub struct ContextMenuProps {
     /// Controlled open state
     pub open: ReadSignal<Option<bool>>,
     /// Default open state
@@ -14,23 +16,23 @@ pub struct DialogProps {
     /// Called when open state changes
     #[props(default)]
     pub on_open_change: Callback<bool>,
-    /// Whether to trap focus (default true)
-    #[props(default = ReadSignal::new(Signal::new(true)))]
-    pub is_modal: ReadSignal<bool>,
+    /// Disable the context menu
+    #[props(default = ReadSignal::new(Signal::new(false)))]
+    pub disabled: ReadSignal<bool>,
     #[props(default)]
     pub class: String,
     pub children: Element,
 }
 
 #[component]
-pub fn Dialog(props: DialogProps) -> Element {
+pub fn ContextMenu(props: ContextMenuProps) -> Element {
     rsx! {
-        dioxus_primitives::dialog::DialogRoot {
-            class: "met-dialog {props.class}",
+        dioxus_primitives::context_menu::ContextMenu {
+            class: "met-context-menu {props.class}",
             open: props.open,
             default_open: props.default_open,
             on_open_change: props.on_open_change,
-            is_modal: props.is_modal,
+            disabled: props.disabled,
             {props.children}
         }
     }

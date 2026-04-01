@@ -7,4 +7,9 @@ description = "UI components for Dioxus: button, input, checkbox, select, slider
 
 [dependencies]
 dioxus = { workspace = true }
+dioxus-primitives = { workspace = true }
 met-core = { workspace = true }
+
+[features]
+default = []
+web = ["dioxus-primitives/web"]

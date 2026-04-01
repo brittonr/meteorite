@@ -1,11 +1,11 @@
-//! Themed dialog wrapping `dioxus_primitives::dialog`.
+//! Themed popover wrapping `dioxus_primitives::popover`.
 
-pub use dioxus_primitives::dialog::{DialogContent, DialogDescription, DialogTitle};
+pub use dioxus_primitives::popover::{PopoverContent, PopoverTrigger};
 
 use dioxus::prelude::*;
 
 #[derive(Props, Clone, PartialEq)]
-pub struct DialogProps {
+pub struct PopoverProps {
     /// Controlled open state
     pub open: ReadSignal<Option<bool>>,
     /// Default open state
@@ -14,23 +14,19 @@ pub struct DialogProps {
     /// Called when open state changes
     #[props(default)]
     pub on_open_change: Callback<bool>,
-    /// Whether to trap focus (default true)
-    #[props(default = ReadSignal::new(Signal::new(true)))]
-    pub is_modal: ReadSignal<bool>,
     #[props(default)]
     pub class: String,
     pub children: Element,
 }
 
 #[component]
-pub fn Dialog(props: DialogProps) -> Element {
+pub fn Popover(props: PopoverProps) -> Element {
     rsx! {
-        dioxus_primitives::dialog::DialogRoot {
-            class: "met-dialog {props.class}",
+        dioxus_primitives::popover::PopoverRoot {
+            class: "met-popover {props.class}",
             open: props.open,
             default_open: props.default_open,
             on_open_change: props.on_open_change,
-            is_modal: props.is_modal,
             {props.children}
         }
     }

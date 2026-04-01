@@ -7,4 +7,9 @@ description = "Overlay components for Dioxus: modal, dialog, popover, tooltip, t
 
 [dependencies]
 dioxus = { workspace = true }
+dioxus-primitives = { workspace = true }
 met-core = { workspace = true }
+
+[features]
+default = []
+web = ["dioxus-primitives/web"]

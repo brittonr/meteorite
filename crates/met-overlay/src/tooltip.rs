@@ -1,19 +1,22 @@
-use dioxus::prelude::*;
+//! Themed tooltip wrapping `dioxus_primitives::tooltip`.
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
-pub enum TooltipPosition {
-    #[default]
-    Top,
-    Bottom,
-    Left,
-    Right,
-}
+pub use dioxus_primitives::tooltip::{TooltipContent, TooltipTrigger};
+
+use dioxus::prelude::*;
 
 #[derive(Props, Clone, PartialEq)]
 pub struct TooltipProps {
-    pub text: String,
+    /// Controlled open state
+    pub open: ReadSignal<Option<bool>>,
+    /// Default open state when uncontrolled
     #[props(default)]
-    pub position: TooltipPosition,
+    pub default_open: bool,
+    /// Called when open state changes
+    #[props(default)]
+    pub on_open_change: Callback<bool>,
+    /// Disable the tooltip
+    #[props(default)]
+    pub disabled: ReadSignal<bool>,
     #[props(default)]
     pub class: String,
     pub children: Element,
@@ -21,18 +24,14 @@ pub struct TooltipProps {
 
 #[component]
 pub fn Tooltip(props: TooltipProps) -> Element {
-    let pos_class = match props.position {
-        TooltipPosition::Top => "met-tooltip-top",
-        TooltipPosition::Bottom => "met-tooltip-bottom",
-        TooltipPosition::Left => "met-tooltip-left",
-        TooltipPosition::Right => "met-tooltip-right",
-    };
-    let class = format!("met-tooltip {} {}", pos_class, props.class);
-
     rsx! {
-        div { class: "{class}",
+        dioxus_primitives::tooltip::Tooltip {
+            class: "met-tooltip {props.class}",
+            open: props.open,
+            default_open: props.default_open,
+            on_open_change: props.on_open_change,
+            disabled: props.disabled,
             {props.children}
-            span { class: "met-tooltip-text", "{props.text}" }
         }
     }
 }

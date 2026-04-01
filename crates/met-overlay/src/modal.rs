@@ -1,34 +1,31 @@
+//! Convenience alias: `Modal` is a dialog that is always modal.
+
 use dioxus::prelude::*;
+
+pub use dioxus_primitives::dialog::{DialogContent as ModalContent, DialogTitle as ModalTitle};
 
 #[derive(Props, Clone, PartialEq)]
 pub struct ModalProps {
-    pub open: bool,
+    pub open: ReadSignal<Option<bool>>,
+    #[props(default)]
+    pub default_open: bool,
+    #[props(default)]
+    pub on_open_change: Callback<bool>,
     #[props(default)]
     pub class: String,
-    pub on_close: Option<EventHandler<()>>,
     pub children: Element,
 }
 
 #[component]
 pub fn Modal(props: ModalProps) -> Element {
-    if !props.open {
-        return rsx! {};
-    }
-
-    let class = format!("met-modal {}", props.class);
-
     rsx! {
-        div { class: "met-modal-backdrop",
-            onclick: move |_| {
-                if let Some(handler) = &props.on_close {
-                    handler.call(());
-                }
-            },
-            div {
-                class: "{class}",
-                onclick: move |evt| evt.stop_propagation(),
-                {props.children}
-            }
+        dioxus_primitives::dialog::DialogRoot {
+            class: "met-modal {props.class}",
+            open: props.open,
+            default_open: props.default_open,
+            on_open_change: props.on_open_change,
+            is_modal: true,
+            {props.children}
         }
     }
 }
