@@ -1,5 +1,8 @@
 use dioxus::prelude::*;
 
+/// Bundled component stylesheet.
+const METEORITE_CSS: &str = include_str!("../assets/meteorite.css");
+
 /// Color palette for a theme.
 #[derive(Debug, Clone, PartialEq)]
 pub struct Palette {
@@ -219,10 +222,11 @@ pub fn ThemeProvider(props: ThemeProviderProps) -> Element {
     let theme_signal = use_signal(|| props.theme.clone());
     use_context_provider(|| theme_signal);
 
-    let css = props.theme.to_css_vars();
+    let vars_css = props.theme.to_css_vars();
 
     rsx! {
-        style { "{css}" }
+        style { "{vars_css}" }
+        style { "{METEORITE_CSS}" }
         {props.children}
     }
 }
