@@ -8,3 +8,4 @@ description = "Fuzzy-search command palette overlay for Dioxus"
 [dependencies]
 dioxus = { workspace = true }
 met-core = { workspace = true }
+ratcore = { workspace = true }

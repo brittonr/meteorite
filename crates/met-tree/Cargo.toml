@@ -8,3 +8,4 @@ description = "Tree view component for Dioxus with expand/collapse, keyboard nav
 [dependencies]
 dioxus = { workspace = true }
 met-core = { workspace = true }
+ratcore = { workspace = true }

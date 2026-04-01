@@ -1,6 +1,12 @@
 //! Tree data model: items, flattening, and visible-row computation.
+//!
+//! Uses ratcore's tree walk algorithm under the hood. The `TreeItem` struct
+//! provides the Dioxus-friendly String-based API; a private adapter bridges
+//! it to ratcore's `TreeData` trait.
 
-use std::collections::{BTreeMap, BTreeSet};
+use std::collections::{BTreeMap, BTreeSet, HashMap};
+
+use ratcore::tree::{self as rc, TreeData};
 
 /// A single node in the tree.
 #[derive(Debug, Clone, PartialEq)]
@@ -47,90 +53,114 @@ pub struct VisibleRow {
     pub ancestors_last: Vec<bool>,
 }
 
-/// Build the flat visible-row list from items + expanded set.
-pub fn compute_visible_rows(items: &[TreeItem], expanded: &BTreeSet<String>) -> Vec<VisibleRow> {
-    // Index: parent_id → ordered children
-    let mut children_map: BTreeMap<Option<&str>, Vec<&TreeItem>> = BTreeMap::new();
-    for item in items {
-        children_map
-            .entry(item.parent_id.as_deref())
-            .or_default()
-            .push(item);
-    }
+// ── Adapter: Vec<TreeItem> → ratcore::tree::TreeData ────────────────────────
 
-    let child_ids: BTreeSet<&str> = items
-        .iter()
-        .filter_map(|i| i.parent_id.as_deref())
-        .collect();
-
-    let mut rows = Vec::new();
-    let roots: Vec<&TreeItem> = children_map.get(&None).cloned().unwrap_or_default();
-    let root_count = roots.len();
-
-    for (i, root) in roots.iter().enumerate() {
-        let is_last = i == root_count - 1;
-        walk(
-            root,
-            &children_map,
-            &child_ids,
-            expanded,
-            0,
-            is_last,
-            &[],
-            &mut rows,
-        );
-    }
-
-    rows
+struct TreeItemsAdapter {
+    items: Vec<TreeItem>,
+    roots: Vec<usize>,
+    children: BTreeMap<usize, Vec<usize>>,
+    id_to_idx: HashMap<String, usize>,
+    parent_idx: Vec<Option<usize>>,
 }
 
-fn walk(
-    item: &TreeItem,
-    children_map: &BTreeMap<Option<&str>, Vec<&TreeItem>>,
-    parent_ids: &BTreeSet<&str>,
-    expanded: &BTreeSet<String>,
-    depth: usize,
-    is_last_sibling: bool,
-    ancestors_last: &[bool],
-    rows: &mut Vec<VisibleRow>,
-) {
-    let has_children = parent_ids.contains(item.id.as_str());
-    let is_expanded = has_children && expanded.contains(&item.id);
+impl TreeItemsAdapter {
+    fn new(items: &[TreeItem]) -> Self {
+        let id_to_idx: HashMap<String, usize> = items
+            .iter()
+            .enumerate()
+            .map(|(i, item)| (item.id.clone(), i))
+            .collect();
 
-    rows.push(VisibleRow {
-        id: item.id.clone(),
-        label: item.label.clone(),
-        icon: item.icon.clone(),
-        depth,
-        has_children,
-        is_expanded,
-        is_last_sibling,
-        ancestors_last: ancestors_last.to_vec(),
-    });
+        let mut roots = Vec::new();
+        let mut children: BTreeMap<usize, Vec<usize>> = BTreeMap::new();
+        let mut parent_idx = vec![None; items.len()];
 
-    if is_expanded {
-        let kids: Vec<&TreeItem> = children_map
-            .get(&Some(item.id.as_str()))
-            .cloned()
-            .unwrap_or_default();
-        let kid_count = kids.len();
-        let mut child_ancestors: Vec<bool> = ancestors_last.to_vec();
-        child_ancestors.push(is_last_sibling);
+        for (i, item) in items.iter().enumerate() {
+            match item.parent_id.as_ref().and_then(|pid| id_to_idx.get(pid.as_str())) {
+                Some(&pidx) => {
+                    children.entry(pidx).or_default().push(i);
+                    parent_idx[i] = Some(pidx);
+                }
+                None if item.parent_id.is_none() => {
+                    roots.push(i);
+                }
+                None => {
+                    // Parent ID given but not found — treat as root.
+                    roots.push(i);
+                }
+            }
+        }
 
-        for (ci, kid) in kids.iter().enumerate() {
-            let kid_is_last = ci == kid_count - 1;
-            walk(
-                kid,
-                children_map,
-                parent_ids,
-                expanded,
-                depth + 1,
-                kid_is_last,
-                &child_ancestors,
-                rows,
-            );
+        Self {
+            items: items.to_vec(),
+            roots,
+            children,
+            id_to_idx,
+            parent_idx,
         }
     }
+}
+
+impl TreeData for TreeItemsAdapter {
+    fn root_count(&self) -> usize {
+        self.roots.len()
+    }
+
+    fn root(&self, index: usize) -> usize {
+        self.roots[index]
+    }
+
+    fn child_count(&self, node: usize) -> usize {
+        self.children.get(&node).map(|v| v.len()).unwrap_or(0)
+    }
+
+    fn child(&self, node: usize, index: usize) -> usize {
+        self.children[&node][index]
+    }
+
+    fn node_label(&self, node: usize) -> &str {
+        &self.items[node].label
+    }
+
+    fn node_icon(&self, node: usize) -> Option<&str> {
+        self.items[node].icon.as_deref()
+    }
+
+    fn parent(&self, node: usize) -> Option<usize> {
+        self.parent_idx[node]
+    }
+}
+
+/// Build the flat visible-row list from items + expanded set.
+///
+/// Delegates to ratcore's tree walk, then maps back to String-based rows.
+pub fn compute_visible_rows(items: &[TreeItem], expanded: &BTreeSet<String>) -> Vec<VisibleRow> {
+    let adapter = TreeItemsAdapter::new(items);
+
+    // Convert String expanded set → usize expanded set.
+    let expanded_idx: BTreeSet<usize> = expanded
+        .iter()
+        .filter_map(|id| adapter.id_to_idx.get(id.as_str()).copied())
+        .collect();
+
+    let rc_rows = rc::compute_visible_rows(&adapter, &expanded_idx);
+
+    rc_rows
+        .into_iter()
+        .map(|r| {
+            let item = &adapter.items[r.node_id];
+            VisibleRow {
+                id: item.id.clone(),
+                label: item.label.clone(),
+                icon: item.icon.clone(),
+                depth: r.depth,
+                has_children: r.has_children,
+                is_expanded: r.is_expanded,
+                is_last_sibling: r.is_last_sibling,
+                ancestors_last: r.ancestors_last,
+            }
+        })
+        .collect()
 }
 
 #[cfg(test)]
@@ -179,10 +209,8 @@ mod tests {
     fn last_sibling_flags() {
         let expanded = BTreeSet::from(["0".into(), "1".into()]);
         let rows = compute_visible_rows(&sample_items(), &expanded);
-        // a (index 1) is not last sibling, b (index 4) is
         assert!(!rows[1].is_last_sibling);
         assert!(rows[4].is_last_sibling);
-        // a1 ancestors_last: [true(root), false(a is not last)]
         assert_eq!(rows[2].ancestors_last, vec![true, false]);
     }
 

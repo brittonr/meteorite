@@ -41,3 +41,4 @@ met-tree = { path = "crates/met-tree" }
 met-command-palette = { path = "crates/met-command-palette" }
 met-datepicker = { path = "crates/met-datepicker" }
 met-markdown = { path = "crates/met-markdown" }
+ratcore = { path = "../ratcore" }

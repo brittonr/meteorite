@@ -1834,6 +1834,7 @@ version = "0.1.0"
 dependencies = [
  "dioxus",
  "met-core",
+ "ratcore",
 ]
 
 [[package]]
@@ -1849,6 +1850,7 @@ version = "0.1.0"
 dependencies = [
  "dioxus",
  "met-core",
+ "ratcore",
 ]
 
 [[package]]
@@ -1899,6 +1901,7 @@ version = "0.1.0"
 dependencies = [
  "dioxus",
  "met-core",
+ "ratcore",
 ]
 
 [[package]]
@@ -2299,6 +2302,10 @@ checksum = "76afc826de14238e6e8c374ddcc1fa19e374fd8dd986b0d2af0d02377261d83c"
 dependencies = [
  "getrandom 0.3.4",
 ]
+
+[[package]]
+name = "ratcore"
+version = "0.1.0"
 
 [[package]]
 name = "raw-window-handle"
